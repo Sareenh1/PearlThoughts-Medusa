@@ -26,14 +26,17 @@ jobs:
           source: "."
           target: ~/medusa
 
+     
       - name: Run Medusa migrations and start development server
-        uses: actions/scp-action@v1.0.5
+        uses: webfactory/ssh-agent@v0.5.4
         with:
+          ssh-private-key: ${{ secrets.EC2_KEY }}
           host: ${{ secrets.EC2_PUBLIC_IP }}
           username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
           command: |
             cd ~/medusa
             npx medusa migrations run
             medusa develop
+
+
 
