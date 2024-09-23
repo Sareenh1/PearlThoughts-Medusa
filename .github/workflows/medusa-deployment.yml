@@ -1,0 +1,38 @@
+name: Medusa Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          cd medusa
+          npm install
+
+      - name: Deploy to EC2
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.EC2_PUBLIC_IP }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          source: "."
+          target: ~/medusa
+
+      - name: Run Medusa migrations and start development server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_PUBLIC_IP }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          command: |
+            cd ~/medusa
+            npx medusa migrations run
+            medusa develop
