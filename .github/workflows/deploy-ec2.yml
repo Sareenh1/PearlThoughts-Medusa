@@ -1,0 +1,35 @@
+  - name: Setup SSH  
+    uses: webfactory/ssh-agent@v0.5.4  
+    with:  
+      ssh-private-key: ${{ EC2_KEY }}  
+
+  - name: Connect to EC2  
+    run: |  
+      ssh -o "StrictHostKeyChecking=no" ubuntu@${EC2_PUBLIC_IP} "ls"  
+
+  - name: Install dependencies and deploy  
+    run: |  
+      ssh ubuntu@${EC2_PUBLIC_IP} <<EOF  
+        echo "Updating package list..."  
+        sudo apt update  
+        sudo apt upgrade -y  
+        sudo apt install -y nodejs  
+        sudo apt install -y postgresql postgresql-contrib  
+        sudo service postgresql start  
+        sudo -u postgres psql -c "CREATE ROLE medusa_user WITH PASSWORD '12345';"  
+        sudo -u postgres psql -c "ALTER ROLE medusa_user WITH SUPERUSER;"  
+        sudo -u postgres psql -c "CREATE DATABASE medusa_db;"  
+        sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE medusa_db TO medusa_user;"  
+        sudo -u postgres psql -c "ALTER ROLE medusa_user WITH LOGIN;"  
+        sudo npm install -g @medusajs/medusa-cli  
+        mkdir my-medusa-store  
+        cd my-medusa-store  
+        medusa new my-medusa-store  
+        nano .env  
+      DATABASE_URL=postgres://medusa_user:12345@localhost:5432/medusa_db  
+      EOF  
+      ssh ubuntu@${EC2_PUBLIC_IP} <<EOF  
+        cd my-medusa-store  
+        npx medusa migrations run  
+        medusa develop &  
+      EOF
