@@ -1,7 +1,7 @@
   - name: Setup SSH  
     uses: webfactory/ssh-agent@v0.5.4  
     with:  
-      ssh-private-key: ${{ EC2_KEY }}  
+      ssh-private-key: ${{ secrets.EC2_KEY }}  
 
   - name: Connect to EC2  
     run: |  
