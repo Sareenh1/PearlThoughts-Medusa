@@ -24,7 +24,7 @@ jobs:
             cd /home/ubuntu/PearlThoughts-Medusa/Task-4/my-medusa-store || exit  
             cd /home/ubuntu/PearlThoughts-Medusa/Task-4/my-medusa-store || exit  
             git pull origin main  
-            npm install  
+            npm install -g pm2  
             npx medusa migrations run  
             pm2 restart medusa || pm2 start npm --name "medusa" -- start  
           EOF
