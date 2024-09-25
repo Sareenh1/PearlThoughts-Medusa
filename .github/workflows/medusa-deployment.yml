@@ -21,18 +21,33 @@ jobs:
       - name: Deploy to EC2  
         run: |  
           ssh -o "StrictHostKeyChecking=no" ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'  
-            cd /home/ubuntu/PearlThoughts-Medusa/Task-4/my-medusa-store || exit  
+            cd /home/ubuntu/PearlThoughts-Medusa || exit  
+
+            # Add git safe.directory exception  
             git config --global --add safe.directory /home/ubuntu/PearlThoughts-Medusa  
+
+            # Create npm global directory if it does not exist  
             if [ ! -d "$HOME/.npm-global" ]; then  
-            mkdir "$HOME/.npm-global"  
-            npm config set prefix "$HOME/.npm-global"  
-            echo 'export PATH=$HOME/.npm-global/bin:$PATH' >> ~/.bashrc  
-            source ~/.bashrc  
+              mkdir "$HOME/.npm-global"  
+              npm config set prefix "$HOME/.npm-global"  
+              echo 'export PATH=$HOME/.npm-global/bin:$PATH' >> ~/.bashrc  
+              # Make sure the new path is available  
+              source ~/.bashrc  
             fi  
+
+            # If necessary, install PM2 with proper permissions  
             npm install -g pm2 || sudo npm install -g pm2  
+
+            # Pull the latest changes  
+            # Ensure the repository URL and access rights are correct  
             git pull origin main  
+
+            # Install dependencies  
             npm install || exit  
+
+            # Run migrations  
             npx medusa migrations run  
+
+            # Restart or start the app using PM2  
             pm2 restart medusa || pm2 start npm --name "medusa" -- start  
-            EOF 
-            
+          EOF
