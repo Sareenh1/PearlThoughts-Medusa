@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Install SSH key
         uses: webfactory/ssh-agent@v0.5.4
@@ -18,27 +18,14 @@ jobs:
           ssh-private-key: ${{ secrets.EC2_KEY_PAIR }}
 
       - name: Deploy to EC2
-        uses: actions/scp-action@v3
-        with:
-          host: ${{ secrets.EC2_PUBLIC_IP }}
-          username: ubuntu
-          source: "."
-          target: "~/my-app"
+        run: |
+          ssh ubuntu@${{ secrets.EC2_PUBLIC_IP }} "mkdir -p ~/my-app"
+          scp -r . ubuntu@${{ secrets.EC2_PUBLIC_IP }}:~/my-app
 
       - name: Install dependencies
-        uses: actions/ssh-action@v3
-        with:
-          host: ${{ secrets.EC2_PUBLIC_IP }}
-          username: ubuntu
-          command: |
-            cd ~/my-app
-            npm install
+        run: |
+          ssh ubuntu@${{ secrets.EC2_PUBLIC_IP }} "cd ~/my-app && npm install"
 
       - name: Start application
-        uses: actions/ssh-action@v3
-        with:
-          host: ${{ secrets.EC2_PUBLIC_IP }}
-          username: ubuntu
-          command: |
-            cd ~/my-app
-            npm start
+        run: |
+          ssh ubuntu@${{ secrets.EC2_PUBLIC_IP }} "cd ~/my-app && npm start"
