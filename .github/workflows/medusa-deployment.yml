@@ -1,1 +1,42 @@
+name: Medusa Deployment
 
+on:
+push:
+ branches:
+   - main
+
+jobs:
+deploy:
+ runs-on: ubuntu-latest
+ steps:
+   - name: Checkout code
+     uses: actions/checkout@v2
+
+   - name: Install dependencies
+     run: |
+       cd my-medusa-store
+       npm install
+
+   - name: Setup Node.js 20
+     uses: actions/setup-node@v2
+     with:
+       node-version: '20'
+
+   - name: Deploy to EC2
+     uses: appleboy/scp-action@v1
+     with:
+       host: ${{ secrets.EC2_PUBLIC_IP }}
+       username: ubuntu
+       key: ${{ secrets.EC2_KEY_PAIR }}
+       source: "my-medusa-store"
+       target: ~/my-medusa-store
+
+   - name: Run Medusa on EC2
+     uses: appleboy/ssh-action@v1
+     with:
+       host: ${{ secrets.EC2_PUBLIC_IP }}
+       username: ubuntu
+       key: ${{ secrets.EC2_KEY_PAIR }}
+       command: |
+         cd ~/my-medusa-store
+         npm run start
