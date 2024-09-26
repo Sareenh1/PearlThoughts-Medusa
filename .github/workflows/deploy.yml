@@ -21,7 +21,7 @@ jobs:
 
       - name: SSH into EC2 and Deploy Medusa
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@<EC2_PUBLIC_IP> "
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} "
             cd /home/ubuntu/PearlThoughts-Medusa/Task-4/my-medusa-store && \
             git pull origin main && \
             sudo apt update && \
