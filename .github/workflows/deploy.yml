@@ -26,7 +26,7 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t medusa-backend:latest ./Task-7/my-medusa-store
-
+      
       - name: Tag Docker image
         run: |
           REPOSITORY_URI=992382465189.dkr.ecr.us-east-1.amazonaws.com/medusa-backend
