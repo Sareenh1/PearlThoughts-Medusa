@@ -1,38 +1,26 @@
-name: Build and Push Docker Image to ECR
+# Use the official Node.js image
+FROM node:16-alpine
 
-on:
-  push:
-    branches:
-      - main  # Trigger the workflow on push to the main branch
+# Set the working directory inside the container
+WORKDIR /app
 
-jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
+# Install bash and PostgreSQL client
+RUN apk add --no-cache bash libpq
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+# Install Medusa CLI globally
+RUN npm install -g @medusajs/medusa-cli
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+# Copy the package.json and package-lock.json to the working directory
+COPY package*.json ./
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+# Install project dependencies
+RUN npm install
 
-      - name: Build Docker image
-        run: docker build -t medusa-backend:latest ./Task-7
-      
-      - name: Tag Docker image
-        run: |
-          REPOSITORY_URI=992382465189.dkr.ecr.us-east-1.amazonaws.com/medusa-backend
-          docker tag medusa-backend:latest $992382465189.dkr.ecr.us-east-1.amazonaws.com/medusa-backend:latest
+# Copy the rest of your application code to the container
+COPY . .
 
-      - name: Push Docker image to ECR
-        run: |
-          REPOSITORY_URI=992382465189.dkr.ecr.us-east-1.amazonaws.com/medusa-backend
-          docker push $992382465189.dkr.ecr.us-east-1.amazonaws.com/medusa-backend:latest
+# Expose the necessary port
+EXPOSE 9000
+
+# Start the Medusa server
+CMD ["medusa", "start"]
