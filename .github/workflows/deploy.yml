@@ -30,10 +30,10 @@ jobs:
 
       - name: Tag Docker image
         run: |
-          REPOSITORY_URI=<your-account-id>.dkr.ecr.us-east-1.amazonaws.com/medusa-backend
-          docker tag medusa-backend:latest $REPOSITORY_URI:latest
+          REPOSITORY_URI=992382465189.dkr.ecr.us-east-1.amazonaws.com/medusa-backend
+          docker tag medusa-backend:latest $992382465189.dkr.ecr.us-east-1.amazonaws.com/medusa-backend:latest
 
       - name: Push Docker image to ECR
         run: |
-          REPOSITORY_URI=<your-account-id>.dkr.ecr.us-east-1.amazonaws.com/medusa-backend
-          docker push $REPOSITORY_URI:latest
+          REPOSITORY_URI=992382465189.dkr.ecr.us-east-1.amazonaws.com/medusa-backend
+          docker push $992382465189.dkr.ecr.us-east-1.amazonaws.com/medusa-backend:latest
