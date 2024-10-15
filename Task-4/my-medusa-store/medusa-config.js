@@ -29,7 +29,7 @@ const ADMIN_CORS =
 const STORE_CORS = process.env.STORE_CORS || "http://localhost:8000";
 
 const DATABASE_URL =
-  process.env.DATABASE_URL || "postgres://medusa_user:12345@localhost:5432/medusa_db";
+  process.env.DATABASE_URL || "";
 
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 
