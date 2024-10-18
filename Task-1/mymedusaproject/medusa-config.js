@@ -84,7 +84,7 @@ const projectConfig = {
 module.exports = {
   projectConfig: {
     ...projectConfig,
-    database_url: "postgres://medusauser:12345@localhost:5432/medusadb",
+    database_url: 
   },
   plugins,
   modules,
