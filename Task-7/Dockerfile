@@ -20,7 +20,7 @@ RUN npm install
 COPY . .
 
 # Expose the port Medusa will run on
-EXPOSE 9000
+EXPOSE 900
 
 # Run Medusa in development mode using the CLI
 CMD ["npx", "medusa", "develop"]
