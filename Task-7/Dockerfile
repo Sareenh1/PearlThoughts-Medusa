@@ -11,7 +11,7 @@ RUN apk add --no-cache bash libpq
 RUN npm install -g @medusajs/medusa-cli
 
 # Copy package.json and package-lock.json (or yarn.lock)
-COPY package*.json ./
+COPY package*.json .
 
 # Install project dependencies
 RUN npm install
